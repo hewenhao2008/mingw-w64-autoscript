@@ -1,0 +1,29 @@
+--- a/mingw-w64-crt/configure
++++ b/mingw-w64-crt/configure
+@@ -5424,10 +5424,10 @@
+   x86_64) :
+ 
+     lib64suffx=lib
+-    lib32suffx=lib32 ;; #(
++    lib32suffx=lib ;; #(
+   i*86) :
+ 
+-    lib64suffx=lib64
++    lib64suffx=lib
+     lib32suffx=lib ;; #(
+   *) :
+ 
+--- a/mingw-w64-crt/configure.ac
++++ b/mingw-w64-crt/configure.ac
+@@ -122,9 +122,9 @@
+ AS_CASE([$host_cpu],
+   [x86_64],[
+     lib64suffx=lib
+-    lib32suffx=lib32],
++    lib32suffx=lib],
+   [i*86],[
+-    lib64suffx=lib64
++    lib64suffx=lib
+     lib32suffx=lib],
+   [
+     lib64suffx=lib64

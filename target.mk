@@ -112,7 +112,7 @@ widl:
 
 mingw-w64-headers:
 	mkdir -p $(MINGW_W64_HEADERS_BUILD_DIR)
-	(cd $(MINGW_W64_HEADERS_BUILD_DIR) && $(MINGW_W64_HEADERS_SRC_DIR)/configure --prefix=$(PREFIX)/$(TARGET) --target=$(TARGET) --host=$(HOST) --enable-idl --enable-secure-api)
+	(cd $(MINGW_W64_HEADERS_BUILD_DIR) && $(MINGW_W64_HEADERS_SRC_DIR)/configure --prefix=$(PREFIX) --target=$(TARGET) --host=$(HOST) --enable-idl --enable-secure-api)
 	$(MAKE) -C $(MINGW_W64_HEADERS_BUILD_DIR) install DESTDIR=$(TARGET_PREFIX)
 
 mingw-w64-crt: mingw-w64-headers
@@ -132,11 +132,11 @@ winstorecompat:
 
 gcc: mingw-w64-crt gmp-bootstrap mpfr-bootstrap mpc-bootstrap isl-bootstrap cloog-bootstrap
 	mkdir -p $(GCC_BUILD_DIR)
-	(cd $(GCC_BUILD_DIR) && $(GCC_SRC_DIR)/configure --prefix=$(PREFIX) --host=$(HOST) --target=$(TARGET) --disable-nls --enable-lto --disable-multilib --disable-win32-registry --disable-libstdcxx-pch --disable-symvers --enable-shared --enable-static --enable-languages=c,c++ --enable-libstdcxx-debug --enable-version-specific-runtime-libs --enable-decimal-float=yes --enable-threads=posix --enable-tls --enable-fully-dynamic-string --with-gnu-ld --with-gnu-as --without-newlib --with-libiconv --with-local-prefix=$(PREFIX)/local --with-native-system-header-dir=/mingw64/include --with-gmp=$(TARGET_BOOTSTRAP_LIBS_PREFIX) --with-mpfr=$(TARGET_BOOTSTRAP_LIBS_PREFIX) --with-mpc=$(TARGET_BOOTSTRAP_LIBS_PREFIX) --with-isl=$(TARGET_BOOTSTRAP_LIBS_PREFIX) --with-cloog=$(TARGET_BOOTSTRAP_LIBS_PREFIX))
+	(cd $(GCC_BUILD_DIR) && $(GCC_SRC_DIR)/configure --prefix=$(PREFIX) --host=$(HOST) --target=$(TARGET) --disable-nls --enable-lto --disable-multilib --disable-win32-registry --disable-libstdcxx-pch --disable-symvers --enable-shared --enable-static --enable-languages=c,c++ --enable-libstdcxx-debug --enable-version-specific-runtime-libs --enable-decimal-float=yes --enable-threads=posix --enable-tls --enable-fully-dynamic-string --with-gnu-ld --with-gnu-as --without-newlib --with-libiconv --with-local-prefix=$(PREFIX)/local --with-native-system-header-dir=$(PREFIX)/include --with-gmp=$(TARGET_BOOTSTRAP_LIBS_PREFIX) --with-mpfr=$(TARGET_BOOTSTRAP_LIBS_PREFIX) --with-mpc=$(TARGET_BOOTSTRAP_LIBS_PREFIX) --with-isl=$(TARGET_BOOTSTRAP_LIBS_PREFIX) --with-cloog=$(TARGET_BOOTSTRAP_LIBS_PREFIX))
 	_COMPILE_TIME_PREFIX=$(TARGET_PREFIX)/ $(MAKE) -C $(GCC_BUILD_DIR)
 	$(MAKE) -C $(GCC_BUILD_DIR) install DESTDIR=$(TARGET_PREFIX)
 
-gdb:
+gdb: gmp-bootstrap mpfr-bootstrap mpc-bootstrap isl-bootstrap
 	mkdir -p $(GDB_BUILD_DIR)
 	(cd $(GDB_BUILD_DIR) && $(GDB_SRC_DIR)/configure --prefix=$(PREFIX) --host=$(HOST) --target=$(TARGET) --disable-nls --with-system-zlib --with-isl=$(TARGET_BOOTSTRAP_LIBS_PREFIX))
 	$(MAKE) -C $(GDB_BUILD_DIR)
@@ -171,6 +171,9 @@ zlib:
 	mkdir -p $(ZLIB_BUILD_DIR)
 	cp -a $(ZLIB_SRC_DIR)/* $(ZLIB_BUILD_DIR)
 	$(MAKE) -C $(ZLIB_BUILD_DIR) -f win32/Makefile.gcc PREFIX=$(TARGET)- DESTDIR=$(ZLIB_BUILD_DIR)/install install
+	mkdir -p $(TARGET_PREFIX)/$(PREFIX)/lib/pkgconfig
+	mkdir -p $(TARGET_PREFIX)/$(PREFIX)/include
+	mkdir -p $(TARGET_PREFIX)/$(PREFIX)/bin
 	cp $(ZLIB_BUILD_DIR)/libz.a $(TARGET_PREFIX)/$(PREFIX)/lib
 	cp $(ZLIB_BUILD_DIR)/libz.dll.a $(TARGET_PREFIX)/$(PREFIX)/lib
 	cp $(ZLIB_BUILD_DIR)/install/pkgconfig/zlib.pc $(TARGET_PREFIX)/$(PREFIX)/lib/pkgconfig

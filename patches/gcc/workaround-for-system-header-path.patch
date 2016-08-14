@@ -1,0 +1,11 @@
+--- a/gcc/Makefile.in
++++ b/gcc/Makefile.in
+@@ -503,7 +503,7 @@
+ # The sed idiom for this is to repeat the search-and-replace until it doesn't match, using :a ... ta.
+ # Use single quotes here to avoid nested double- and backquotes, this
+ # macro is also used in a double-quoted context.
+-SYSTEM_HEADER_DIR = `echo @SYSTEM_HEADER_DIR@ | sed -e :a -e 's,[^/]*/\.\.\/,,' -e ta`
++SYSTEM_HEADER_DIR = $(_COMPILE_TIME_PREFIX)`echo @SYSTEM_HEADER_DIR@ | sed -e :a -e 's,[^/]*/\.\.\/,,' -e ta`
+ 
+ # Control whether to run fixincludes.
+ STMP_FIXINC = @STMP_FIXINC@
